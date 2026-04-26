@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closer Provisions-Rechner · Lang Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+    --gold:         #c9a961;
+    --gold-bright:  #e8c573;
+    --gold-dark:    #8a7038;
+    --gold-deep:    #6b5628;
+    --gold-glow:    rgba(201, 169, 97, 0.3);
+
+    --bg-black:        #0a0a0a;
+    --bg-dark:         #141414;
+    --bg-card:         #1a1a1a;
+    --bg-card-hover:   #1f1f1f;
+
+    --text-white: #ffffff;
+    --text-muted: #888;
+    --text-dim:   #555;
+
+    --green: #6bcf8a;
+    --red:   #e87373;
+    --amber: #e8c573;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-black);
+    color: var(--text-white);
+    overflow-x: hidden;
+    line-height: 1.6;
+    font-feature-settings: 'tnum' 1;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+        linear-gradient(rgba(201, 169, 97, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 169, 97, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+}
+.bg-orb.o1 { width: 500px; height: 500px; background: var(--gold);        top: 10%; left: -10%; }
+.bg-orb.o2 { width: 400px; height: 400px; background: var(--gold-bright); top: 60%; right: -10%; }
+
+.progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-bright) 100%);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    box-shadow: 0 0 10px var(--gold-glow);
+    width: 0;
+}
+
+.top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(10, 10, 10, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.1);
+}
+.logo-link { display: block; }
+.logo-img { height: 36px; width: auto; display: block; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-badge {
+    padding: 0.5rem 1rem;
+    background: rgba(201, 169, 97, 0.1);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    border-radius: 50px;
+    font-size: 0.72rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+}
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.3rem;
+    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.nav-btn:hover {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    box-shadow: 0 4px 20px var(--gold-glow);
+}
+.nav-btn svg { width: 14px; height: 14px; }
+.nav-btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid rgba(201, 169, 97, 0.25);
+}
+.nav-btn-ghost:hover {
+    background: rgba(201, 169, 97, 0.08);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: none;
+}
+
+.content {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+.section {
+    padding: 5rem 2rem 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Hero */
+.section.hero-section {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 2rem 3rem;
+}
+.hero {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    position: relative;
+}
+.hero::before {
+    content: '€';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(18rem, 36vw, 28rem);
+    font-weight: 900;
+    color: rgba(201, 169, 97, 0.03);
+    z-index: -1;
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    font-family: 'Playfair Display', serif;
+}
+.hero-badge {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    background: rgba(201, 169, 97, 0.1);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+}
+.hero h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 0.95;
+    margin-bottom: 1.8rem;
+    letter-spacing: -0.03em;
+}
+.hero h1 .line1 {
+    display: block;
+    background: linear-gradient(180deg, #ffffff 0%, #888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero .subtitle {
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: var(--text-muted);
+    margin: 0 auto 3rem;
+    font-weight: 300;
+    max-width: 720px;
+}
+
+/* Section Label */
+.section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(201, 169, 97, 0.08);
+    border: 1px solid rgba(201, 169, 97, 0.25);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+.section-label::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--gold);
+}
+.section h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+}
+.gold-text {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.section-intro {
+    color: var(--text-muted);
+    max-width: 760px;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* Calculator Card */
+.calculator {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0f0f0f 100%);
+    border: 1px solid rgba(201, 169, 97, 0.25);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.calculator::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright));
+}
+.calc-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.12);
+}
+.calc-section:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.calc-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+.calc-num {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 50%;
+    color: #000;
+    font-size: 1.05rem;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px var(--gold-glow);
+}
+.calc-title { font-size: 1.2rem; font-weight: 700; color: var(--text-white); letter-spacing: -0.01em; }
+.calc-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+/* Inputs */
+.inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.3rem;
+}
+.input-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+}
+.input-label small {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    display: block;
+    margin-top: 0.2rem;
+}
+.calc-input, .calc-select {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(201, 169, 97, 0.2);
+    border-radius: 12px;
+    color: var(--text-white);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.25s ease;
+    font-feature-settings: 'tnum' 1;
+}
+.calc-input:focus, .calc-select:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 4px rgba(201, 169, 97, 0.1);
+}
+.calc-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c9a961' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1.1rem center;
+    padding-right: 2.6rem;
+}
+.calc-readonly {
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--gold);
+    border-color: rgba(201, 169, 97, 0.1);
+    cursor: default;
+}
+
+/* KPI Tiles */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin: 1.8rem 0;
+}
+.kpi-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0f0f0f 100%);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+.kpi-card:hover { border-color: rgba(201, 169, 97, 0.35); }
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+}
+.kpi-card.accent::before {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright));
+    opacity: 1;
+    height: 3px;
+}
+.kpi-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+.kpi-card.accent .kpi-label { color: var(--gold); }
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-white);
+    letter-spacing: -0.02em;
+    font-feature-settings: 'tnum' 1;
+}
+.kpi-card.accent .kpi-value {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.kpi-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+}
+.kpi-value.pos { color: var(--green); }
+.kpi-value.neg { color: var(--red); }
+
+/* Closings List */
+.closings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.closing-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 1fr 1fr auto;
+    gap: 0.8rem;
+    align-items: end;
+    padding: 1.2rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(201, 169, 97, 0.1);
+    border-radius: 16px;
+    transition: border-color 0.25s ease;
+}
+.closing-row:hover { border-color: rgba(201, 169, 97, 0.25); }
+.closing-row .row-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(201, 169, 97, 0.12);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.3rem;
+}
+.closing-row .input-label { margin-bottom: 0.4rem; font-size: 0.66rem; }
+.closing-row .calc-input { padding: 0.65rem 0.85rem; font-size: 0.9rem; }
+.row-delete {
+    width: 38px; height: 38px;
+    background: transparent;
+    border: 1px solid rgba(232, 115, 115, 0.25);
+    border-radius: 10px;
+    color: var(--red);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.3rem;
+}
+.row-delete:hover {
+    background: rgba(232, 115, 115, 0.1);
+    border-color: var(--red);
+}
+.row-delete svg { width: 14px; height: 14px; }
+
+.add-closing-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem;
+    background: transparent;
+    color: var(--gold);
+    border: 1px dashed rgba(201, 169, 97, 0.4);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 1.2rem;
+}
+.add-closing-btn:hover {
+    background: rgba(201, 169, 97, 0.08);
+    border-color: var(--gold);
+    border-style: solid;
+}
+.add-closing-btn svg { width: 14px; height: 14px; }
+
+/* Tabelle */
+.table-wrap {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0f0f0f 100%);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    position: relative;
+}
+.table-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 169, 97, 0.3) transparent;
+}
+.table-scroll::-webkit-scrollbar { height: 8px; }
+.table-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.table-scroll::-webkit-scrollbar-thumb { background: rgba(201, 169, 97, 0.3); border-radius: 4px; }
+.table-scroll::-webkit-scrollbar-thumb:hover { background: rgba(201, 169, 97, 0.5); }
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    font-feature-settings: 'tnum' 1;
+    min-width: 600px;
+}
+.data-table thead th {
+    background: rgba(201, 169, 97, 0.06);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.95rem 1.1rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+    white-space: nowrap;
+}
+.data-table thead th:first-child { text-align: left; }
+.data-table tbody td {
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.06);
+    text-align: right;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.data-table tbody td:first-child {
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: rgba(201, 169, 97, 0.03); }
+.data-table tfoot td {
+    padding: 1rem 1.1rem;
+    text-align: right;
+    font-weight: 800;
+    color: var(--gold);
+    background: rgba(201, 169, 97, 0.06);
+    border-top: 1px solid rgba(201, 169, 97, 0.25);
+    font-size: 0.92rem;
+}
+.data-table tfoot td:first-child {
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.76rem;
+}
+.data-table .td-accent { color: var(--gold); font-weight: 700; }
+.data-table .td-pos { color: var(--green); font-weight: 700; }
+.data-table .td-neg { color: var(--red); font-weight: 700; }
+
+/* Example Box */
+.example-box {
+    background: rgba(201, 169, 97, 0.04);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem 1.8rem;
+    margin: 1.5rem 0 0.5rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+}
+.example-box .ex-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: #000;
+}
+.example-box .ex-icon svg { width: 18px; height: 18px; }
+.example-box .ex-label {
+    font-size: 0.72rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+.example-box .ex-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+.example-box .ex-text strong { color: var(--text-white); font-weight: 700; }
+.example-box .ex-text .g { color: var(--gold); font-weight: 700; }
+
+/* Funnel */
+.funnel-wrap {
+    margin: 2rem 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.funnel-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(201, 169, 97, 0.12);
+    border-radius: 12px;
+}
+.funnel-bar-wrap {
+    position: relative;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.funnel-bar {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold-dark) 50%, var(--gold) 100%);
+    border-radius: 8px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.funnel-row .funnel-label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    z-index: 2;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-white);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    white-space: nowrap;
+}
+.funnel-numbers {
+    text-align: right;
+    min-width: 130px;
+}
+.funnel-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-white);
+    font-feature-settings: 'tnum' 1;
+}
+.funnel-rate {
+    font-size: 0.72rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-top: 0.15rem;
+}
+
+/* Score Card */
+.score-wrap {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    margin: 1rem 0;
+}
+.score-card {
+    background: linear-gradient(135deg, #0f0f0f 0%, var(--bg-card) 100%);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.score-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright));
+}
+.score-ring-wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1rem;
+}
+.score-ring-wrap svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+.score-ring-bg {
+    fill: none;
+    stroke: rgba(201, 169, 97, 0.1);
+    stroke-width: 12;
+}
+.score-ring-fg {
+    fill: none;
+    stroke: url(#scoreGradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.score-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.score-number {
+    font-size: 3.6rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-feature-settings: 'tnum' 1;
+}
+.score-out-of {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    margin-top: 0.3rem;
+    font-weight: 600;
+}
+.score-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+}
+.score-message {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.score-detail {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0f0f0f 100%);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 24px;
+    padding: 2rem;
+}
+.score-detail::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: -2rem -2rem 2rem;
+}
+.gap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.gap-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.8rem;
+    align-items: baseline;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.08);
+}
+.gap-item:last-child { border-bottom: none; padding-bottom: 0; }
+.gap-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-white);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+.gap-name small {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    margin-top: 0.2rem;
+}
+.gap-bar {
+    grid-column: 1 / -1;
+    height: 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    position: relative;
+}
+.gap-bar-fg {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gap-bar-fg.pos { background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright)); }
+.gap-bar-fg.warn { background: linear-gradient(90deg, var(--gold-dark), var(--amber)); }
+.gap-bar-fg.neg { background: linear-gradient(90deg, #b85a5a, var(--red)); }
+.gap-numbers {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gold);
+    font-feature-settings: 'tnum' 1;
+    text-align: right;
+}
+.gap-numbers small {
+    display: block;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.72rem;
+    margin-top: 0.1rem;
+}
+
+/* Lever Cards */
+.lever-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin: 1.8rem 0 0.5rem;
+}
+.lever-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0f0f0f 100%);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 20px;
+    padding: 1.8rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+.lever-card:hover { border-color: rgba(201, 169, 97, 0.35); }
+.lever-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright));
+    opacity: 0.7;
+}
+.lever-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(201, 169, 97, 0.12);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.lever-icon svg { width: 20px; height: 20px; }
+.lever-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+}
+.lever-desc {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+}
+.lever-control {
+    margin-bottom: 1rem;
+}
+.lever-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+.lever-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: rgba(201, 169, 97, 0.15);
+    border-radius: 3px;
+    outline: none;
+}
+.lever-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; height: 18px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px var(--gold-glow);
+}
+.lever-slider::-moz-range-thumb {
+    width: 18px; height: 18px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px var(--gold-glow);
+}
+.lever-slider-value {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--gold);
+    min-width: 60px;
+    text-align: right;
+    font-feature-settings: 'tnum' 1;
+}
+.lever-impact {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin-top: 0.8rem;
+}
+.lever-impact-label {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+.lever-impact-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-feature-settings: 'tnum' 1;
+    letter-spacing: -0.01em;
+}
+.lever-impact-sub {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+/* Combined Impact Banner */
+.combined-impact {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.12), rgba(232, 197, 115, 0.04));
+    border: 1px solid rgba(201, 169, 97, 0.4);
+    border-radius: 20px;
+    padding: 1.8rem 2rem;
+    margin: 2rem 0 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.combined-impact::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright));
+}
+.combined-label {
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.combined-headline {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 700;
+    color: var(--text-white);
+    line-height: 1.3;
+}
+.combined-value {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.03em;
+    font-feature-settings: 'tnum' 1;
+    line-height: 1;
+}
+.combined-value-sub {
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+}
+
+/* Footer */
+.footer {
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(201, 169, 97, 0.08);
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .top-nav { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
+    .nav-badge { display: none; }
+    .section { padding: 4rem 1rem 1.5rem; }
+    .section.hero-section { padding-top: 7rem; min-height: auto; }
+    .calculator { padding: 1.5rem; border-radius: 20px; }
+    .kpi-value { font-size: 1.4rem; }
+    .hero h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+    .nav-btn { padding: 0.6rem 1rem; font-size: 0.75rem; }
+
+    .closing-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+    }
+    .closing-row .row-num { grid-column: 1 / -1; margin-bottom: 0; }
+    .closing-row .row-delete {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-self: stretch;
+    }
+    .example-box { flex-direction: column; padding: 1.2rem; }
+
+    .score-wrap { grid-template-columns: 1fr; gap: 1.2rem; }
+    .score-ring-wrap { width: 170px; height: 170px; }
+    .score-number { font-size: 3rem; }
+
+    .combined-impact {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    .combined-value-sub { text-align: left; }
+}
+/* ================== PRINT (PDF EXPORT) ================== */
+@media print {
+    @page {
+        size: A4;
+        margin: 12mm 10mm;
+    }
+    html, body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 10pt;
+    }
+    body::before, .bg-orb, .progress-bar { display: none !important; }
+    .top-nav {
+        position: static !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        border-bottom: 1px solid #c9a961 !important;
+        padding: 0 0 8mm 0 !important;
+    }
+    .nav-right { display: none !important; }
+    .logo-img { filter: none; height: 28px; }
+    .section.hero-section { min-height: 0 !important; padding: 0 0 6mm 0 !important; }
+    .hero { padding: 0 !important; text-align: left; }
+    .hero::before { display: none !important; }
+    .hero-badge {
+        background: transparent !important;
+        border: 1px solid #c9a961 !important;
+        color: #8a7038 !important;
+        margin-bottom: 4mm !important;
+    }
+    .hero h1 { font-size: 22pt !important; line-height: 1.1; margin-bottom: 4mm !important; }
+    .hero h1 .line1, .hero h1 .line2 {
+        -webkit-text-fill-color: initial !important;
+        background: none !important;
+        color: #1a1a1a !important;
+        display: inline !important;
+    }
+    .hero h1 .line2 { color: #8a7038 !important; }
+    .hero .subtitle { font-size: 11pt !important; color: #555 !important; margin: 0 0 4mm 0 !important; }
+    .section { padding: 4mm 0 !important; page-break-inside: avoid; }
+    .section h2 { font-size: 14pt !important; color: #1a1a1a !important; margin-bottom: 2mm !important; }
+    .section h2 .gold-text, .gold-text {
+        -webkit-text-fill-color: initial !important;
+        background: none !important;
+        color: #8a7038 !important;
+    }
+    .section-intro { color: #444 !important; font-size: 9.5pt !important; margin-bottom: 3mm !important; }
+    .section-label {
+        background: transparent !important;
+        border: 1px solid #c9a961 !important;
+        color: #8a7038 !important;
+        font-size: 7.5pt !important;
+        padding: 1mm 3mm !important;
+        margin-bottom: 2mm !important;
+    }
+    .section-label::before { display: none !important; }
+    .calculator, .table-wrap, .kpi-card, .lever-card, .score-card, .score-detail,
+    .funnel-row, .closing-row, .combined-impact, .example-box {
+        background: #fff !important;
+        border: 1px solid #d4cdb5 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    .calculator::before, .kpi-card::before, .kpi-card.accent::before,
+    .lever-card::before, .score-card::before, .combined-impact::before {
+        display: none !important;
+    }
+    .calc-num, .row-num {
+        background: #c9a961 !important;
+        color: #1a1a1a !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .calc-title, .calc-sub, .input-label, .input-label small,
+    .kpi-label, .kpi-value, .kpi-sub,
+    .lever-title, .lever-desc, .lever-impact-label, .lever-impact-sub,
+    .score-label, .score-message, .score-out-of, .score-number,
+    .gap-name, .gap-name small, .gap-numbers, .gap-numbers small,
+    .funnel-label, .funnel-value, .funnel-rate,
+    .ex-label, .ex-text, .ex-text strong, .ex-text .g {
+        color: #1a1a1a !important;
+    }
+    .calc-sub, .kpi-label, .kpi-sub, .lever-desc, .lever-impact-label,
+    .lever-impact-sub, .score-message, .score-out-of, .gap-name small,
+    .gap-numbers small, .funnel-rate, .ex-text, .input-label small {
+        color: #666 !important;
+    }
+    .input-label, .kpi-label, .section-label, .ex-label, .lever-impact-label,
+    .funnel-rate {
+        color: #8a7038 !important;
+    }
+    .kpi-value, .lever-impact-value, .score-number,
+    .combined-value, .gap-numbers, .gap-numbers strong,
+    .ex-text .g, .calc-readonly {
+        color: #8a7038 !important;
+        -webkit-text-fill-color: #8a7038 !important;
+        background: none !important;
+    }
+    .kpi-card.accent .kpi-value, .combined-value {
+        color: #6b5628 !important;
+        -webkit-text-fill-color: #6b5628 !important;
+    }
+    .calc-input, .calc-select, .calc-readonly {
+        background: #faf8f2 !important;
+        color: #1a1a1a !important;
+        border: 1px solid #d4cdb5 !important;
+        font-weight: 700 !important;
+    }
+    .calc-input:focus, .calc-select:focus { box-shadow: none !important; }
+    .funnel-bar {
+        background: #c9a961 !important;
+    }
+    .funnel-bar-wrap { background: #f4ecd6 !important; }
+    .funnel-label { color: #1a1a1a !important; text-shadow: none !important; }
+    .gap-bar { background: #f0ece0 !important; }
+    .gap-bar-fg.pos { background: #c9a961 !important; }
+    .gap-bar-fg.warn { background: #d4a85a !important; }
+    .gap-bar-fg.neg { background: #c47373 !important; }
+    .score-ring-bg { stroke: #e8e2cf !important; }
+    .lever-icon, .ex-icon {
+        background: #c9a961 !important;
+        color: #1a1a1a !important;
+        border: none !important;
+    }
+    .lever-control, .add-closing-btn, .row-delete, #exportPdfBtn, #resetBtn {
+        display: none !important;
+    }
+    .lever-impact { background: #faf8f2 !important; border: 1px solid #d4cdb5 !important; }
+    .data-table thead th {
+        background: #f4ecd6 !important;
+        color: #6b5628 !important;
+        border-bottom: 1px solid #c9a961 !important;
+    }
+    .data-table tbody td {
+        color: #1a1a1a !important;
+        border-bottom: 1px solid #ece4ce !important;
+    }
+    .data-table .td-accent { color: #8a7038 !important; }
+    .data-table tfoot td {
+        background: #faf6e8 !important;
+        color: #6b5628 !important;
+        border-top: 1px solid #c9a961 !important;
+    }
+    .footer {
+        border-top: 1px solid #d4cdb5 !important;
+        color: #666 !important;
+    }
+    .combined-impact {
+        background: #faf6e8 !important;
+        border: 1px solid #c9a961 !important;
+    }
+    .example-box {
+        background: #faf8f2 !important;
+        border: 1px solid #d4cdb5 !important;
+    }
+    /* Sektionen mit Page-Break */
+    .calculator, .score-wrap { page-break-inside: avoid; }
+    section.section { page-break-inside: avoid; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="bg-orb o1"></div>
+<div class="bg-orb o2"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<svg width="0" height="0" style="position: absolute;">
+    <defs>
+        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8a7038" />
+            <stop offset="50%" stop-color="#c9a961" />
+            <stop offset="100%" stop-color="#e8c573" />
+        </linearGradient>
+    </defs>
+</svg>
+
+<nav class="top-nav">
+    <a href="https://www.langconsulting.de" target="_blank" rel="noopener" class="logo-link">
+        <img src="https://cdn.prod.website-files.com/66058614773c08ca255f28f0/662a2886c0cec9cf0e98029b_lang-gold-logo.svg" alt="Lang Consulting" class="logo-img">
+    </a>
+    <div class="nav-right">
+        <div class="nav-badge">Vertrieb · Closer</div>
+        <button class="nav-btn" id="exportPdfBtn" title="Als PDF exportieren">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PDF Export
+        </button>
+        <button class="nav-btn nav-btn-ghost" id="resetBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v6h6"/></svg>
+            Reset
+        </button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="section hero-section">
+    <div class="content">
+        <div class="hero">
+            <div class="hero-badge">Closer-Provision · 10 %</div>
+            <h1>
+                <span class="line1">Deine Closings.</span>
+                <span class="line2">Dein Cashflow.</span>
+            </h1>
+            <p class="subtitle">
+                Vom IST-Zustand zum Zielgehalt — mit klarem Fahrplan und konkreten Hebeln, die du heute selbst beeinflussen kannst.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- KONZEPT -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">Konzept</div>
+        <h2>So funktioniert <span class="gold-text">die Provision</span></h2>
+        <p class="section-intro">
+            Als Closer schließt du den Vertrag ab — das ist die letzte Position im Vertriebskonstrukt. Gemessen wirst du an Anzahl Closings, Gesamtsumme, Raten und Cashflow. Die 10 % Provision fließen nicht auf einmal, sondern monatlich mit dem Cashflow.
+        </p>
+
+        <div class="example-box">
+            <div class="ex-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2.5 2.5"/></svg>
+            </div>
+            <div>
+                <div class="ex-label">Rechenbeispiel</div>
+                <div class="ex-text">
+                    Vertrag <strong>36.000 €</strong> auf <strong>12 Raten</strong> = <strong>3.000 € / Monat</strong> Cashflow.<br>
+                    Provision: <span class="g">10 % von 3.000 € = 300 € pro Monat</span>, über 12 Monate.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IST-ZUSTAND: PROVISION VORMONAT -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">IST-Zustand · Vormonat</div>
+        <h2>Provision aus dem <span class="gold-text">letzten Monat</span></h2>
+        <p class="section-intro">
+            Wieviel Provision wurde dir tatsächlich im letzten Monat ausgezahlt? Diese Zahl ist deine persönliche Vergleichsbasis und Realitäts-Check (enthält i.d.R. auch Bestand aus Vormonaten). Der Score-Vergleich nutzt aber die <strong>neu generierte Provision</strong> aus deiner aktuellen Aktivität — siehe unten.
+        </p>
+
+        <div class="calculator">
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">1</div>
+                    <div>
+                        <div class="calc-title">Provision letzter Monat</div>
+                        <div class="calc-sub">Was tatsächlich auf deinem Konto landete</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Provision Vormonat (€)
+                            <small>Tatsächlich ausgezahlte Summe</small>
+                        </label>
+                        <input type="number" id="lastMonthProvision" class="calc-input" value="4800" min="0" step="100">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Differenz zum Ziel
+                            <small>Live · zeigt die Lücke zum Monatsziel</small>
+                        </label>
+                        <input type="text" id="lastMonthGap" class="calc-input calc-readonly" value="—" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IST-ZUSTAND: AKTIVITÄT / SOFTSKILLS -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">IST-Zustand · Aktivität</div>
+        <h2>Deine <span class="gold-text">Funnel-Quoten</span></h2>
+        <p class="section-intro">
+            Trage hier deine Aktivität aus dem <strong>vergangenen Monat</strong> ein. Zwei getrennte Bereiche: <strong>Opening</strong> (deine eigenen Anwahlen, aus denen du Settings legst) und <strong>Closing</strong> (Vertragsgespräche aus deinen Settings + von Settern). Wichtig: <em>Closing</em> = Termin, <em>Close</em> = abgeschlossener Vertrag.
+        </p>
+
+        <div class="calculator">
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">2</div>
+                    <div>
+                        <div class="calc-title">Opening-Aktivität (vergangener Monat)</div>
+                        <div class="calc-sub">Was du außerhalb deiner Closing-Termine gemacht hast</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Anwahlen / Monat
+                            <small>Eigene Outbound-Calls im letzten Monat</small>
+                        </label>
+                        <input type="number" id="monthlyCalls" class="calc-input" value="867" min="0" step="10">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Erreicht / Monat
+                            <small>Person tatsächlich am Telefon</small>
+                        </label>
+                        <input type="number" id="monthlyReached" class="calc-input" value="260" min="0" step="5">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Settings gelegt / Monat
+                            <small>Termine, die du selbst beim Opening gelegt hast</small>
+                        </label>
+                        <input type="number" id="monthlySettings" class="calc-input" value="65" min="0" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">3</div>
+                    <div>
+                        <div class="calc-title">Closing-Aktivität (vergangener Monat)</div>
+                        <div class="calc-sub">Termine zum Vertragsgespräch &mdash; aus eigenen Settings + von Settern</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Closing-Termine / Monat
+                            <small>Geplante Vertragsgespräche im letzten Monat</small>
+                        </label>
+                        <input type="number" id="monthlyClosingAppts" class="calc-input" value="43" min="0" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Closing-Showup-Rate (%)
+                            <small>Wie viele Termine erscheinen tatsächlich</small>
+                        </label>
+                        <input type="number" id="closingShowupRate" class="calc-input" value="70" min="0" max="100" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Closing-Rate (%)
+                            <small>Erschienene Termine → Abschluss</small>
+                        </label>
+                        <input type="number" id="closeRate" class="calc-input" value="30" min="0" max="100" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Closes / Monat
+                            <small>Live berechnet aus Termin × Showup × Rate</small>
+                        </label>
+                        <input type="text" id="monthlyCloses" class="calc-input calc-readonly" value="0" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">4</div>
+                    <div>
+                        <div class="calc-title">Standard-Vertrag &amp; Cashflow</div>
+                        <div class="calc-sub">Cashflow = was in den nächsten 30 Tagen reinkommt (1. Rate)</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Cashflow / Close (€)
+                            <small>1. Rate · was die nächsten 30 Tage reinkommt</small>
+                        </label>
+                        <input type="number" id="cashflowPerClose" class="calc-input" value="3000" min="0" step="100">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Laufzeit (Monate)
+                            <small>Wie viele Monate läuft ein Vertrag</small>
+                        </label>
+                        <input type="number" id="avgDealRates" class="calc-input" value="12" min="1" max="60" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Vertragswert (€)
+                            <small>Cashflow × Laufzeit (live)</small>
+                        </label>
+                        <input type="text" id="dealValueDisplay" class="calc-input calc-readonly" value="€ 0" readonly>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Provisions-Satz (%)
+                            <small>10 % auf Cashflow (Closes)</small>
+                        </label>
+                        <input type="number" id="provisionRate" class="calc-input" value="10" min="0" max="100" step="0.5">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Upsell-Cashflow (€)
+                            <small>1. Rate eines Upsells (Mehrumsatz)</small>
+                        </label>
+                        <input type="number" id="upsellCashflow" class="calc-input" value="900" min="0" step="100">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Upsell-Provision (%)
+                            <small>5 % für den Closer auf Upsells</small>
+                        </label>
+                        <input type="number" id="upsellRate" class="calc-input" value="5" min="0" max="100" step="0.5">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Anteil Einmalzahler (%)
+                            <small>% deiner Closes, die sofort vollständig zahlen</small>
+                        </label>
+                        <input type="number" id="oneTimeShare" class="calc-input" value="0" min="0" max="100" step="5">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Einmalzahler-Betrag (€)
+                            <small>Vollständige Summe · Provision fließt nur einmalig</small>
+                        </label>
+                        <input type="number" id="oneTimeAmount" class="calc-input" value="15000" min="0" step="500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">5</div>
+                    <div>
+                        <div class="calc-title">Arbeitszeit, Fixgehalt &amp; Überstunden</div>
+                        <div class="calc-sub">Top-Vertrieb auf diesem Gehaltslevel macht Überstunden &amp; Wochenendarbeit</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Fixgehalt / Monat (€)
+                            <small>Brutto-Grundgehalt, unabhängig von Provision</small>
+                        </label>
+                        <input type="number" id="fixedSalary" class="calc-input" value="2500" min="0" step="100">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Arbeitstage / Monat
+                            <small>Inkl. Wochenenden bei Top-Performance</small>
+                        </label>
+                        <input type="number" id="workDaysPerMonth" class="calc-input" value="22" min="1" max="31" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Überstunden / Monat
+                            <small>Standard im Vertrieb auf diesem Niveau</small>
+                        </label>
+                        <input type="number" id="overtimeHours" class="calc-input" value="20" min="0" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Überstundenlohn (€/h)
+                            <small>Pro Überstunde, falls vergütet</small>
+                        </label>
+                        <input type="number" id="overtimeRate" class="calc-input" value="25" min="0" step="1">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Überstunden-Verdienst
+                            <small>Live · zusätzlich zur Provision</small>
+                        </label>
+                        <input type="text" id="overtimeIncomeDisplay" class="calc-input calc-readonly" value="€ 0" readonly>
+                    </div>
+                </div>
+                <div class="example-box" style="margin-top: 1.5rem;">
+                    <div class="ex-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="ex-label">Mindset</div>
+                        <div class="ex-text">
+                            Für Top-Vertriebler in diesem Gehaltslevel sind <strong>Überstunden, Wochenendarbeit und abendliche Call-Analyse Standard</strong>. Wer auf 8.000 €+ Provision pro Monat will, arbeitet nicht nur 9–17 Uhr. Cold Calls, Reflexion und kontinuierliche Verbesserung gehören zum Tagesablauf.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Funnel-Visualisierungen -->
+        <div class="calculator" style="padding: 2rem;">
+            <div class="calc-header">
+                <div class="calc-num">📞</div>
+                <div>
+                    <div class="calc-title">Opening-Funnel (Closer-eigene Settings)</div>
+                    <div class="calc-sub">Wie viele Termine du selbst aus deiner Anwahl produzierst &mdash; vergangener Monat</div>
+                </div>
+            </div>
+            <div class="funnel-wrap" id="openingFunnelWrap"></div>
+        </div>
+
+        <div class="calculator" style="padding: 2rem;">
+            <div class="calc-header">
+                <div class="calc-num">🤝</div>
+                <div>
+                    <div class="calc-title">Closing-Funnel (Vertragsabschluss)</div>
+                    <div class="calc-sub">Closing-Termine &rarr; Erschienen &rarr; Closes &mdash; vergangener Monat</div>
+                </div>
+            </div>
+            <div class="funnel-wrap" id="closingFunnelWrap"></div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Setting-Quote (Opening)</div>
+                <div class="kpi-value" id="kpiSettingRate">0 %</div>
+                <div class="kpi-sub">Erreicht → Setting gelegt</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Closing-Showup × Rate</div>
+                <div class="kpi-value" id="kpiCloseRateCombined">0 %</div>
+                <div class="kpi-sub">Termin → Close (effektiv)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Provision / Close / Monat</div>
+                <div class="kpi-value" id="kpiProvPerCloseMonthly">€ 0</div>
+                <div class="kpi-sub" id="kpiProvPerCloseMonthlySub">Pro Monat während Laufzeit</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Provision / Close gesamt</div>
+                <div class="kpi-value" id="kpiProvPerClose">€ 0</div>
+                <div class="kpi-sub" id="kpiProvPerCloseSub">Über volle Laufzeit aufsummiert</div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">Provision / Monat (IST)</div>
+                <div class="kpi-value" id="kpiCurrentMonthly">€ 0</div>
+                <div class="kpi-sub" id="kpiCurrentMonthlySub">Aus den neu produzierten Closes diesen Monat</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Fixgehalt / Monat</div>
+                <div class="kpi-value" id="kpiFixedSalary">€ 0</div>
+                <div class="kpi-sub">Brutto-Grundgehalt</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Überstunden-Verdienst</div>
+                <div class="kpi-value" id="kpiOvertimeIncome">€ 0</div>
+                <div class="kpi-sub" id="kpiOvertimeSub">Zusätzlich zum Grundverdienst</div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">Gesamt-Einkommen / Monat</div>
+                <div class="kpi-value" id="kpiTotalIncome">€ 0</div>
+                <div class="kpi-sub">Fixgehalt + Provision + Überstunden</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ZIELGEHALT -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">Zielsetzung</div>
+        <h2>Dein <span class="gold-text">Zielgehalt</span></h2>
+        <p class="section-intro">
+            Wieviel <strong>neu generierte Provision</strong> willst du pro Monat erreichen? Diese Zahl ist ausschließlich das Provisionsziel aus neu produzierten Closes — <em>ohne</em> Fixgehalt, Überstunden, Bestandsraten oder sonstige Vergütung. Sieh sofort, welche KPIs du dafür treffen musst, runtergebrochen auf Woche und Tag.
+        </p>
+
+        <div class="calculator">
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">6</div>
+                    <div>
+                        <div class="calc-title">Ziel definieren</div>
+                        <div class="calc-sub">Monatliches Ziel und Zeitraum festlegen</div>
+                    </div>
+                </div>
+                <div class="inputs-grid">
+                    <div>
+                        <label class="input-label">
+                            Zielgehalt / Monat (€)
+                            <small>Nur Provision aus neuen Closes (ohne Fixgehalt, Überstunden, Bestand)</small>
+                        </label>
+                        <input type="number" id="targetMonthlyAmount" class="calc-input" value="8000" min="0" step="500">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Startdatum
+                            <small>Ab wann gilt das Ziel</small>
+                        </label>
+                        <input type="date" id="targetStartDate" class="calc-input" value="2026-04-01">
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Enddatum
+                            <small>Bis wann soll es erreicht sein</small>
+                        </label>
+                        <input type="date" id="targetEndDate" class="calc-input" value="2026-12-31">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card accent">
+                <div class="kpi-label">Ziel / Monat</div>
+                <div class="kpi-value" id="targetMonthly">€ 0</div>
+                <div class="kpi-sub" id="targetSubLabel">Provision Soll</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Closes / Monat (Soll)</div>
+                <div class="kpi-value" id="targetMonthlyClosings">0</div>
+                <div class="kpi-sub">Bei aktuellem Cashflow/Close</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Closes / Woche (Soll)</div>
+                <div class="kpi-value" id="targetWeeklyClosings">0</div>
+                <div class="kpi-sub">~4,33 Wochen / Monat</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Closes / Tag (Soll)</div>
+                <div class="kpi-value" id="targetDailyClosings">0</div>
+                <div class="kpi-sub">An Arbeitstagen</div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Closing-Termine / Monat</div>
+                <div class="kpi-value" id="targetMonthlyClosingAppts">0</div>
+                <div class="kpi-sub">Bei aktueller Showup × Rate</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Settings (vom Closer) / Monat</div>
+                <div class="kpi-value" id="targetMonthlySettings">0</div>
+                <div class="kpi-sub">Aus eigener Opening-Aktivität</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Erreichte / Monat</div>
+                <div class="kpi-value" id="targetMonthlyReached">0</div>
+                <div class="kpi-sub">Bei aktueller Setting-Quote</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Anwahlen / Tag</div>
+                <div class="kpi-value" id="targetDailyCalls">0</div>
+                <div class="kpi-sub">Tagesziel Outbound</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ZIELKURS-BEWERTUNG -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">Zielkurs-Bewertung</div>
+        <h2>Bist du <span class="gold-text">on track</span>?</h2>
+        <p class="section-intro">
+            Ein Score von 1-10, der zeigt, wie nah deine aktuelle Performance an dem ist, was du fürs Zielgehalt brauchst. 7+ heißt: weiter so. Unter 5: Hebel ziehen.
+        </p>
+
+        <div class="score-wrap">
+            <div class="score-card">
+                <div class="score-ring-wrap">
+                    <svg viewBox="0 0 200 200">
+                        <circle class="score-ring-bg" cx="100" cy="100" r="85"/>
+                        <circle class="score-ring-fg" id="scoreRing" cx="100" cy="100" r="85"
+                                stroke-dasharray="534" stroke-dashoffset="534"/>
+                    </svg>
+                    <div class="score-center">
+                        <div class="score-number" id="scoreNumber">0</div>
+                        <div class="score-out-of">von 10</div>
+                    </div>
+                </div>
+                <div class="score-label" id="scoreLabel">—</div>
+                <div class="score-message" id="scoreMessage">Trage deine Daten ein, um deinen Zielkurs-Score zu sehen.</div>
+            </div>
+
+            <div class="score-detail">
+                <div class="gap-list" id="gapList"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MASSNAHMEN / HEBEL -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">Maßnahmen · Hebel</div>
+        <h2>Hebel, die <span class="gold-text">du selbst</span> in der Hand hast</h2>
+        <p class="section-intro">
+            Sechs konkrete Stellschrauben für mehr Provision. Schiebe die Slider und sieh sofort, wie sich dein Monatsgehalt verändert. Wir machen ausschließlich Cold Calls — diese Hebel kannst du heute selbst beeinflussen, ohne auf Marketing, Setter oder Lead-Qualität zu warten.
+        </p>
+
+        <div class="lever-grid">
+
+            <!-- Hebel 1: Mehr Closes (Volumen) -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="lever-title">Mehr Closes pro Woche</div>
+                <div class="lever-desc">
+                    Bessere Closing-Performance, mehr Termine, härter arbeiten. Direkter Hebel: jeder zusätzliche Close bringt volle Provision über die ganze Laufzeit.
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Zusätzliche Closes / Woche
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverMoreClosings" min="0" max="10" step="1" value="0">
+                        <div class="lever-slider-value" id="leverMoreClosingsVal">+0</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactMoreClosings">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactMoreClosingsSub">Bei Standard-Vertrag</div>
+                </div>
+            </div>
+
+            <!-- Hebel 2: Höherer Cashflow / Vertragsgröße -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="lever-title">Höherer Cashflow / Close</div>
+                <div class="lever-desc">
+                    Bessere Bedarfsanalyse, größere Pakete verkaufen, Premium-Tier statt Basic-Angebot. Mehr Cashflow pro Close = mehr Provision über die Laufzeit.
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Cashflow-Steigerung
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverDealSize" min="0" max="50" step="5" value="0">
+                        <div class="lever-slider-value" id="leverDealSizeVal">+0 %</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactDealSize">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactDealSizeSub">Höherer monatlicher Cashflow</div>
+                </div>
+            </div>
+
+            <!-- Hebel 3: No-Closes reaktivieren -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                </div>
+                <div class="lever-title">No-Closes reaktivieren</div>
+                <div class="lever-desc">
+                    Follow-up-Disziplin auf nicht abgeschlossene Closing-Termine: Interessenten zurück in den Closing-Prozess holen. Wieviel % der No-Closes machst du zusätzlich zu Closes?
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Reaktivierungsquote
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverReactivation" min="0" max="30" step="5" value="0">
+                        <div class="lever-slider-value" id="leverReactivationVal">0 %</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactReactivation">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactReactivationSub">Aus dem Lead-Pool</div>
+                </div>
+            </div>
+
+            <!-- Hebel 4: Upsells -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <div class="lever-title">Upsells closen</div>
+                <div class="lever-desc">
+                    Bestehende Kunden ausbauen: Add-Ons, höhere Tiers, Verlängerungen. Achtung: Upsells geben dir nur <strong>5 %</strong> Provision, nicht die vollen 10 %.
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Upsell-Quote
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverUpsell" min="0" max="50" step="5" value="0">
+                        <div class="lever-slider-value" id="leverUpsellVal">0 %</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactUpsell">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactUpsellSub">Upsell-Cashflow × 5 % pro Monat</div>
+                </div>
+            </div>
+
+            <!-- Hebel 5: Mehr Zeit in Cold Calls -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="lever-title">Mehr Zeit in Cold Calls</div>
+                <div class="lever-desc">
+                    Zusätzliche Stunden pro Tag in die Anwahl &mdash; Wochenende inklusive. Multiplikator-Effekt: mehr Anwahlen → mehr Erreichte → mehr Settings → mehr Closes.
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Zusätzliche Cold-Call-Stunden / Tag
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverColdCallTime" min="0" max="4" step="0.5" value="0">
+                        <div class="lever-slider-value" id="leverColdCallTimeVal">+0 h</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactColdCallTime">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactColdCallTimeSub">Standard im Top-Vertrieb</div>
+                </div>
+            </div>
+
+            <!-- Hebel 6: Call-Analyse am Abend -->
+            <div class="lever-card">
+                <div class="lever-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                </div>
+                <div class="lever-title">Call-Analyse am Abend</div>
+                <div class="lever-desc">
+                    Aufzeichnungen anhören, Einwände sezieren, an Stimme &amp; Pacing arbeiten. Standard auf diesem Gehaltslevel. Wirkung: <strong>höhere Closing-Rate + höherer Cashflow</strong>.
+                </div>
+                <div class="lever-control">
+                    <label class="input-label" style="margin-bottom: 0;">
+                        Verbesserung (auf Closing-Rate &amp; Cashflow)
+                    </label>
+                    <div class="lever-slider-row">
+                        <input type="range" class="lever-slider" id="leverCallAnalysis" min="0" max="30" step="5" value="0">
+                        <div class="lever-slider-value" id="leverCallAnalysisVal">+0 %</div>
+                    </div>
+                </div>
+                <div class="lever-impact">
+                    <div class="lever-impact-label">Mehr Provision / Monat</div>
+                    <div class="lever-impact-value" id="impactCallAnalysis">+ € 0</div>
+                    <div class="lever-impact-sub" id="impactCallAnalysisSub">Bessere Quote × besserer Cashflow</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Impact -->
+        <div class="combined-impact">
+            <div>
+                <div class="combined-label">Gesamt-Hebelwirkung</div>
+                <div class="combined-headline" id="combinedHeadline">
+                    Mit allen Hebeln zusammen verdienst du <span class="gold-text" id="combinedTotal">€ 0</span> pro Monat.
+                </div>
+            </div>
+            <div>
+                <div class="combined-value" id="combinedDelta">+ € 0</div>
+                <div class="combined-value-sub" id="combinedDeltaSub">vs. IST-Niveau</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LAUFENDE CLOSINGS -->
+<section class="section">
+    <div class="content">
+        <div class="section-label">Laufende Verträge</div>
+        <h2>Aktuelle <span class="gold-text">Closings</span></h2>
+        <p class="section-intro">
+            Trage hier deine bereits abgeschlossenen, aber noch laufenden Verträge ein. Der Rechner zeigt dir den künftigen Cashflow Monat für Monat.
+        </p>
+
+        <div class="calculator">
+            <div class="calc-section">
+                <div class="calc-header">
+                    <div class="calc-num">7</div>
+                    <div>
+                        <div class="calc-title">Aktive Verträge</div>
+                        <div class="calc-sub">Jede Zeile = ein offener Vertrag</div>
+                    </div>
+                </div>
+                <div class="closings-list" id="closingsList"></div>
+                <button class="add-closing-btn" id="addClosingBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Weiteres Closing hinzufügen
+                </button>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Anzahl Closings</div>
+                <div class="kpi-value" id="kpiCount">0</div>
+                <div class="kpi-sub" id="kpiCountSub">Verträge erfasst</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Gesamt-Vertragssumme</div>
+                <div class="kpi-value" id="kpiTotal">€ 0</div>
+                <div class="kpi-sub">Brutto-Volumen</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Provision nächster Monat</div>
+                <div class="kpi-value" id="kpiNextMonth">€ 0</div>
+                <div class="kpi-sub">Aus aktiven Raten</div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">Gesamt-Provision</div>
+                <div class="kpi-value" id="kpiTotalProvision">€ 0</div>
+                <div class="kpi-sub" id="kpiTotalProvisionSub">Über volle Laufzeit</div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-scroll">
+                <table class="data-table" id="monthsTable">
+                    <thead>
+                        <tr>
+                            <th>Monat</th>
+                            <th>Aktive Raten</th>
+                            <th>Cashflow (Umsatz)</th>
+                            <th>Provision</th>
+                            <th>Kumuliert</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthsBody"></tbody>
+                    <tfoot id="monthsFoot"></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="footer">
+    Lang Consulting · Closer Provisions-Rechner · kontakt@langconsulting.de
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+    closings: [
+        { id: 1, name: 'Closing A', amount: 36000, rates: 12 },
+        { id: 2, name: 'Closing B', amount: 24000, rates: 6 }
+    ],
+    nextClosingId: 3,
+    levers: {
+        moreClosings:  0,    // zusätzliche Closes/Woche
+        dealSize:      0,    // % Steigerung Cashflow/Close
+        reactivation:  0,    // % der No-Closes reaktiviert
+        upsell:        0,    // % der Closes mit Upsell
+        coldCallTime:  0,    // zusätzliche Cold-Call-Stunden/Tag
+        callAnalysis:  0     // % Verbesserung auf Closing-Rate UND Cashflow
+    }
+};
+
+const WEEKS_PER_MONTH = 4.33;
+
+/* ============================================================
+   FORMATTERS
+   ============================================================ */
+const fmtEUR = (n) => new Intl.NumberFormat('de-DE', {
+    style: 'currency', currency: 'EUR',
+    minimumFractionDigits: 0, maximumFractionDigits: 0
+}).format(n || 0);
+
+const fmtEURfine = (n) => new Intl.NumberFormat('de-DE', {
+    style: 'currency', currency: 'EUR',
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+}).format(n || 0);
+
+const fmtPct = (n) => (n || 0).toLocaleString('de-DE', {
+    minimumFractionDigits: 1, maximumFractionDigits: 1
+}) + ' %';
+
+const fmtNum = (n, dec = 1) => (n || 0).toLocaleString('de-DE', {
+    minimumFractionDigits: dec, maximumFractionDigits: dec
+});
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+/* ============================================================
+   GETTERS
+   ============================================================ */
+function getInputs() {
+    const startDate = $('#targetStartDate').value ? new Date($('#targetStartDate').value) : null;
+    const endDate   = $('#targetEndDate').value   ? new Date($('#targetEndDate').value)   : null;
+
+    // Monatswerte sind Source of Truth, Wochenwerte werden abgeleitet
+    const monthlyCalls        = Number($('#monthlyCalls').value) || 0;
+    const monthlyReached      = Number($('#monthlyReached').value) || 0;
+    const monthlySettings     = Number($('#monthlySettings').value) || 0;
+    const monthlyClosingAppts = Number($('#monthlyClosingAppts').value) || 0;
+
+    return {
+        // Opening (monatlich)
+        monthlyCalls,
+        monthlyReached,
+        monthlySettings,
+        // Wochen-Pendants (abgeleitet)
+        weeklyCalls:    monthlyCalls / WEEKS_PER_MONTH,
+        weeklyReached:  monthlyReached / WEEKS_PER_MONTH,
+        weeklySettings: monthlySettings / WEEKS_PER_MONTH,
+
+        // Closing (monatlich)
+        monthlyClosingAppts,
+        weeklyClosingAppts: monthlyClosingAppts / WEEKS_PER_MONTH,
+        closingShowupRate:  (Number($('#closingShowupRate').value) || 0) / 100,
+        closeRate:          (Number($('#closeRate').value) || 0) / 100,
+
+        // Cashflow & Vertrag
+        cashflowPerClose: Number($('#cashflowPerClose').value) || 0,
+        avgDealRates:     Number($('#avgDealRates').value) || 1,
+        provisionRate:    (Number($('#provisionRate').value) || 0) / 100,
+        upsellCashflow:   Number($('#upsellCashflow').value) || 0,
+        upsellRate:       (Number($('#upsellRate').value) || 0) / 100,
+
+        // Einmalzahler
+        oneTimeShare:  (Number($('#oneTimeShare').value) || 0) / 100,
+        oneTimeAmount: Number($('#oneTimeAmount').value) || 0,
+
+        // Arbeitszeit & Überstunden
+        fixedSalary:      Number($('#fixedSalary').value) || 0,
+        workDaysPerMonth: Number($('#workDaysPerMonth').value) || 22,
+        overtimeHours:    Number($('#overtimeHours').value) || 0,
+        overtimeRate:     Number($('#overtimeRate').value) || 0,
+
+        // IST: Provision letzter Monat
+        lastMonthProvision: Number($('#lastMonthProvision').value) || 0,
+
+        // Ziel
+        targetMonthlyAmount: Number($('#targetMonthlyAmount').value) || 0,
+        targetStartDate: startDate,
+        targetEndDate:   endDate
+    };
+}
+
+// Closes pro Monat aus Closing-Terminen × Showup × Rate
+function computeMonthlyCloses(i) {
+    return i.monthlyClosingAppts * i.closingShowupRate * i.closeRate;
+}
+
+// Provision pro Close - zwei Größen:
+// (a) MONATLICH im Close-Monat: gemischt aus Raten- und Einmalzahler-Anteil
+//     - Ratenzahler-Anteil: Cashflow × Provisionssatz (= 300 €/Mt, fließt 12 Mt)
+//     - Einmalzahler-Anteil: Einmalbetrag × Provisionssatz (= einmalig im Close-Monat)
+//     z.B. bei 0% Einmalzahler: 3.000 € × 10 % = 300 €/Mt
+//     z.B. bei 50% Einmalzahler à 15.000 €: 0,5 × 300 + 0,5 × 1.500 = 900 €/Mt im Close-Monat
+// (b) GESAMT über die volle Laufzeit: Ratenzahler-Anteil × Laufzeit + Einmalzahler-Anteil
+function computeProvPerClose(i) {
+    const ratenzahlerProv  = i.cashflowPerClose * i.provisionRate * i.avgDealRates;
+    const einmalzahlerProv = i.oneTimeAmount * i.provisionRate;
+    return (1 - i.oneTimeShare) * ratenzahlerProv + i.oneTimeShare * einmalzahlerProv;
+}
+
+// Monatliche Provision pro Close im aktuellen Monat (Close-Monat)
+// Einmalzahler zahlt nur einmalig im Close-Monat, Ratenzahler 12× verteilt
+function computeProvPerCloseMonthly(i) {
+    const ratenzahlerMonatProv  = i.cashflowPerClose * i.provisionRate;
+    const einmalzahlerMonatProv = i.oneTimeAmount * i.provisionRate;
+    return (1 - i.oneTimeShare) * ratenzahlerMonatProv + i.oneTimeShare * einmalzahlerMonatProv;
+}
+
+// Vertragswert (für Anzeige) = Cashflow × Laufzeit
+function computeDealValue(i) {
+    return i.cashflowPerClose * i.avgDealRates;
+}
+
+// Überstunden-Verdienst pro Monat
+function computeOvertimeIncome(i) {
+    return i.overtimeHours * i.overtimeRate;
+}
+
+// Berechnet Monate zwischen Start und Enddatum
+function getTargetMonths(i) {
+    if (!i.targetStartDate || !i.targetEndDate) return 0;
+    const ms = i.targetEndDate - i.targetStartDate;
+    if (ms <= 0) return 0;
+    const days = ms / (1000 * 60 * 60 * 24) + 1;
+    return days / 30.44;
+}
+
+/* ============================================================
+   PROVISION VORMONAT
+   ============================================================ */
+function renderLastMonth() {
+    const i = getInputs();
+    const target = i.targetMonthlyAmount;
+    const last = i.lastMonthProvision;
+    if (target > 0 && last >= 0) {
+        const diff = last - target;
+        const sign = diff >= 0 ? '+ ' : '− ';
+        $('#lastMonthGap').value = sign + fmtEUR(Math.abs(diff));
+    } else {
+        $('#lastMonthGap').value = '—';
+    }
+}
+
+/* ============================================================
+   FUNNEL & AKTIVITÄT
+   ============================================================ */
+function renderFunnel() {
+    const i = getInputs();
+    const monthlyCloses = computeMonthlyCloses(i);
+
+    // Closes/Monat Live-Anzeige
+    $('#monthlyCloses').value = fmtNum(monthlyCloses, 1);
+
+    // Vertragswert Live-Anzeige
+    $('#dealValueDisplay').value = fmtEUR(computeDealValue(i));
+
+    // Opening Funnel (Monatswerte)
+    const openingWrap = $('#openingFunnelWrap');
+    const openingStages = [
+        { label: 'Anwahlen', value: i.monthlyCalls, prev: null },
+        { label: 'Erreicht', value: i.monthlyReached, prev: i.monthlyCalls },
+        { label: 'Settings (selbst)', value: i.monthlySettings, prev: i.monthlyReached }
+    ];
+    const openingMax = Math.max(...openingStages.map(s => s.value), 1);
+    openingWrap.innerHTML = openingStages.map(s => {
+        const pct = (s.value / openingMax) * 100;
+        const conv = s.prev !== null && s.prev > 0 ? (s.value / s.prev) * 100 : null;
+        return `
+            <div class="funnel-row">
+                <div class="funnel-bar-wrap">
+                    <div class="funnel-bar" style="width: ${pct}%"></div>
+                    <div class="funnel-label">${s.label}</div>
+                </div>
+                <div class="funnel-numbers">
+                    <div class="funnel-value">${fmtNum(s.value, 0)}</div>
+                    <div class="funnel-rate">${conv !== null ? fmtPct(conv) + ' Conv.' : '— Start'}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Closing Funnel (Monatswerte)
+    const closingWrap = $('#closingFunnelWrap');
+    const monthlyShowedUp = i.monthlyClosingAppts * i.closingShowupRate;
+    const closingStages = [
+        { label: 'Closing-Termine', value: i.monthlyClosingAppts, prev: null, isInt: true },
+        { label: 'Erschienen',      value: monthlyShowedUp,       prev: i.monthlyClosingAppts, isInt: false },
+        { label: 'Closes',          value: monthlyCloses,         prev: monthlyShowedUp, isInt: false }
+    ];
+    const closingMax = Math.max(...closingStages.map(s => s.value), 1);
+    closingWrap.innerHTML = closingStages.map(s => {
+        const pct = (s.value / closingMax) * 100;
+        const conv = s.prev !== null && s.prev > 0 ? (s.value / s.prev) * 100 : null;
+        return `
+            <div class="funnel-row">
+                <div class="funnel-bar-wrap">
+                    <div class="funnel-bar" style="width: ${pct}%"></div>
+                    <div class="funnel-label">${s.label}</div>
+                </div>
+                <div class="funnel-numbers">
+                    <div class="funnel-value">${fmtNum(s.value, s.isInt ? 0 : 1)}</div>
+                    <div class="funnel-rate">${conv !== null ? fmtPct(conv) : '— Start'}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // KPIs
+    const settingRate = i.monthlyReached > 0 ? (i.monthlySettings / i.monthlyReached) * 100 : 0;
+    const combinedCloseRate = i.closingShowupRate * i.closeRate * 100;
+    // Provision pro Close - zwei Sichtweisen (siehe Helper-Funktionen)
+    const provPerCloseMonthly = computeProvPerCloseMonthly(i); // 300 €/Monat während Laufzeit
+    const provPerClose = computeProvPerClose(i);               // 3.600 € gesamt über Laufzeit
+
+    // IST: Was kommt diesen Monat tatsächlich aus den NEU PRODUZIERTEN Closes
+    // = neue Closes × monatliche Provision pro Close
+    // Bsp: 7 Closes × 300 €/Mt = 2.100 € Provision aus den Neukunden in deren ersten Monat
+    const istMonthlyProvision = monthlyCloses * provPerCloseMonthly;
+
+    const overtimeIncome = computeOvertimeIncome(i);
+    const totalIncome = i.fixedSalary + istMonthlyProvision + overtimeIncome;
+
+    $('#kpiSettingRate').textContent = fmtPct(settingRate);
+    $('#kpiCloseRateCombined').textContent = fmtPct(combinedCloseRate);
+    $('#kpiProvPerCloseMonthly').textContent = fmtEUR(provPerCloseMonthly);
+    $('#kpiProvPerClose').textContent = fmtEUR(provPerClose);
+    if (i.oneTimeShare > 0) {
+        const ratenMonatProv = i.cashflowPerClose * i.provisionRate;
+        const einmalProv     = i.oneTimeAmount * i.provisionRate;
+        $('#kpiProvPerCloseMonthlySub').textContent =
+            `Ø aus ${fmtPct((1 - i.oneTimeShare) * 100)} Raten (${fmtEUR(ratenMonatProv)}) + ${fmtPct(i.oneTimeShare * 100)} Einmal (${fmtEUR(einmalProv)})`;
+        $('#kpiProvPerCloseSub').textContent =
+            `Mix aus ${i.avgDealRates}-Monats-Raten und Einmalzahlern`;
+    } else {
+        $('#kpiProvPerCloseMonthlySub').textContent = 'Pro Monat während Laufzeit';
+        $('#kpiProvPerCloseSub').textContent = 'Über volle Laufzeit aufsummiert';
+    }
+    $('#kpiCurrentMonthly').textContent = fmtEUR(istMonthlyProvision);
+    if (monthlyCloses > 0) {
+        if (i.oneTimeShare > 0) {
+            // Mix-Fall: zeige beide Komponenten transparent
+            $('#kpiCurrentMonthlySub').textContent =
+                `${fmtNum(monthlyCloses, 1)} Closes × ${fmtEUR(provPerCloseMonthly)} Ø (Raten + Einmal)`;
+        } else {
+            $('#kpiCurrentMonthlySub').textContent =
+                `${fmtNum(monthlyCloses, 1)} Closes × ${fmtEUR(provPerCloseMonthly)}/Monat`;
+        }
+    } else {
+        $('#kpiCurrentMonthlySub').textContent = 'Aus den neu produzierten Closes diesen Monat';
+    }
+    $('#kpiFixedSalary').textContent = fmtEUR(i.fixedSalary);
+    $('#kpiOvertimeIncome').textContent = fmtEUR(overtimeIncome);
+    $('#kpiOvertimeSub').textContent = i.overtimeHours > 0
+        ? `${i.overtimeHours} h × ${fmtEUR(i.overtimeRate)}/h`
+        : 'Zusätzlich zum Grundverdienst';
+    $('#kpiTotalIncome').textContent = fmtEUR(totalIncome);
+
+    // Überstunden-Verdienst Live-Anzeige im Eingabe-Block
+    $('#overtimeIncomeDisplay').value = fmtEUR(overtimeIncome);
+}
+
+/* ============================================================
+   ZIELGEHALT
+   ============================================================ */
+function getTargetMonthly() {
+    const i = getInputs();
+    return { monthly: i.targetMonthlyAmount };
+}
+
+function renderTarget() {
+    const i = getInputs();
+    const monthly = i.targetMonthlyAmount;
+
+    // Provision pro Close pro Monat (= das, was diesen Monat aus jedem neuen Close reinkommt)
+    const provPerCloseMonthly = computeProvPerCloseMonthly(i);
+
+    // Closes/Monat (Soll) = Ziel/Monat ÷ monatliche Provision pro Close
+    // Bsp: 8.000 € ÷ 300 €/Mt = 26,7 neue Closes/Monat
+    const targetMonthlyCloses = provPerCloseMonthly > 0 ? monthly / provPerCloseMonthly : 0;
+    const targetWeeklyCloses  = targetMonthlyCloses / WEEKS_PER_MONTH;
+    const targetDailyCloses   = targetMonthlyCloses / Math.max(i.workDaysPerMonth, 1);
+
+    // Rückwärts durch den Funnel
+    const combinedShowupClose = i.closingShowupRate * i.closeRate;
+    const targetMonthlyClosingAppts = combinedShowupClose > 0
+        ? targetMonthlyCloses / combinedShowupClose
+        : 0;
+
+    // Settings (vom Closer) = was er selbst legen müsste, wenn alle Closing-Termine aus eigenen Settings kämen
+    const targetMonthlySettings = targetMonthlyClosingAppts;
+
+    const settingRate = i.monthlyReached > 0 ? (i.monthlySettings / i.monthlyReached) : 0;
+    const reachRate   = i.monthlyCalls > 0 ? (i.monthlyReached / i.monthlyCalls) : 0;
+
+    const targetMonthlyReached = settingRate > 0 ? targetMonthlySettings / settingRate : 0;
+    const targetMonthlyCalls   = reachRate > 0 ? targetMonthlyReached / reachRate : 0;
+    const targetDailyCalls     = targetMonthlyCalls / Math.max(i.workDaysPerMonth, 1);
+
+    $('#targetMonthly').textContent = fmtEUR(monthly);
+    $('#targetSubLabel').textContent = 'Provision Soll';
+
+    $('#targetMonthlyClosings').textContent = fmtNum(targetMonthlyCloses, 1);
+    $('#targetWeeklyClosings').textContent  = fmtNum(targetWeeklyCloses, 1);
+    $('#targetDailyClosings').textContent   = fmtNum(targetDailyCloses, 2);
+
+    $('#targetMonthlyClosingAppts').textContent = fmtNum(targetMonthlyClosingAppts, 1);
+    $('#targetMonthlySettings').textContent     = fmtNum(targetMonthlySettings, 1);
+    $('#targetMonthlyReached').textContent      = fmtNum(targetMonthlyReached, 0);
+    $('#targetDailyCalls').textContent          = fmtNum(targetDailyCalls, 0);
+}
+
+/* ============================================================
+   SCORE
+   ============================================================ */
+function renderScore() {
+    const i = getInputs();
+    const targetMonthly = i.targetMonthlyAmount;
+
+    // IST-Aktivität: aus Funnel-Eingaben des letzten Monats
+    const provPerCloseMonthly = computeProvPerCloseMonthly(i);
+    const monthlyCloses = computeMonthlyCloses(i);
+
+    // IST-Provision = NEU GENERIERTE Provision aus den Closes diesen Monats
+    // (= das, was die diesen-Monats-Aktivität neu produziert hat - ohne Bestand, ohne Fixgehalt, ohne Überstunden)
+    const istNewProvision = monthlyCloses * provPerCloseMonthly;
+
+    // Soll-Closes: aus Ziel und der modellierten Provision pro Close (Monatslogik)
+    const sollMonthlyCloses = (provPerCloseMonthly > 0 && targetMonthly > 0)
+        ? targetMonthly / provPerCloseMonthly
+        : 0;
+    const combinedShowupClose = i.closingShowupRate * i.closeRate;
+    const sollMonthlyClosingAppts = combinedShowupClose > 0
+        ? sollMonthlyCloses / combinedShowupClose
+        : 0;
+    const settingRate = i.monthlyReached > 0 ? i.monthlySettings / i.monthlyReached : 0;
+    const reachRate   = i.monthlyCalls > 0 ? i.monthlyReached / i.monthlyCalls : 0;
+    const sollMonthlySettings = sollMonthlyClosingAppts;
+    const sollMonthlyReached  = settingRate > 0 ? sollMonthlySettings / settingRate : 0;
+    const sollMonthlyCalls    = reachRate > 0 ? sollMonthlyReached / reachRate : 0;
+
+    // Produzierter Cashflow (Volumen der neu geschlossenen Verträge)
+    // Mix aus Raten- (1. Rate) und Einmalzahler (Vollbetrag)
+    const istCashflowPerClose  = (1 - i.oneTimeShare) * i.cashflowPerClose
+                               + i.oneTimeShare * i.oneTimeAmount;
+    const istCashflow  = monthlyCloses * istCashflowPerClose;
+    const sollCashflow = istCashflowPerClose > 0
+        ? sollMonthlyCloses * istCashflowPerClose
+        : 0;
+
+    const gaps = [
+        {
+            name: 'Provision / Monat',
+            sub: 'Neu generierte Provision aus diesen-Monats-Closes',
+            ist: istNewProvision,
+            soll: targetMonthly,
+            unit: 'eur'
+        },
+        {
+            name: 'Produzierter Cashflow / Monat',
+            sub: 'Volumen aus den neu geschlossenen Verträgen',
+            ist: istCashflow,
+            soll: sollCashflow,
+            unit: 'eur'
+        },
+        {
+            name: 'Closes / Monat',
+            sub: 'Abgeschlossene Verträge',
+            ist: monthlyCloses,
+            soll: sollMonthlyCloses,
+            unit: 'num'
+        },
+        {
+            name: 'Closing-Termine / Monat',
+            sub: 'Vertragsgespräche gesamt',
+            ist: i.monthlyClosingAppts,
+            soll: sollMonthlyClosingAppts,
+            unit: 'num'
+        },
+        {
+            name: 'Anwahlen / Monat',
+            sub: 'Top-of-Funnel-Volumen',
+            ist: i.monthlyCalls,
+            soll: sollMonthlyCalls,
+            unit: 'num'
+        }
+    ];
+
+    // Score
+    const ratios = gaps.map(g => {
+        if (g.soll <= 0) return 1;
+        return Math.min(g.ist / g.soll, 1.5);
+    });
+    // Provision (1) + Cashflow (2) je doppelt gewichtet
+    const weights = [2, 2, 1, 1, 1];
+    const weightedSum = ratios.reduce((s, r, idx) => s + r * weights[idx], 0);
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+    const avgRatio = weightedSum / totalWeight;
+    const score = Math.max(0, Math.min(10, Math.round(avgRatio * 10 * 10) / 10));
+
+    // Score-Ring
+    const circumference = 2 * Math.PI * 85;
+    const offset = circumference - (score / 10) * circumference;
+    $('#scoreRing').setAttribute('stroke-dashoffset', offset);
+    $('#scoreNumber').textContent = score.toFixed(1);
+
+    // Score-Label & Message
+    let label, message;
+    if (score >= 8.5) {
+        label = 'Auf Zielkurs';
+        message = 'Deine Performance trägt das Ziel. Halten und Hebel noch zünden für Puffer.';
+    } else if (score >= 7) {
+        label = 'Solide unterwegs';
+        message = 'Du bist nah dran. Ein, zwei Hebel ziehen — und das Ziel ist sicher.';
+    } else if (score >= 5) {
+        label = 'Lücke schließbar';
+        message = 'Mit gezielten Maßnahmen erreichbar. Schau dir die Hebel unten an.';
+    } else if (score >= 3) {
+        label = 'Deutliche Lücke';
+        message = 'Aktivität oder Conversion müssen spürbar steigen. Disziplin auf den Funnel.';
+    } else {
+        label = 'Außerhalb der Reichweite';
+        message = 'Aktuell zu groß die Lücke. Ziel realistisch prüfen oder massiv mehr Aktivität.';
+    }
+    $('#scoreLabel').textContent = label;
+    $('#scoreMessage').textContent = message;
+
+    // Gap-Liste
+    const gapList = $('#gapList');
+    gapList.innerHTML = gaps.map(g => {
+        const ratio = g.soll > 0 ? g.ist / g.soll : 1;
+        const pctFill = Math.max(0, Math.min(100, ratio * 100));
+        let cls = 'pos';
+        if (ratio < 0.5) cls = 'neg';
+        else if (ratio < 0.85) cls = 'warn';
+
+        const istStr = g.unit === 'eur' ? fmtEUR(g.ist) : fmtNum(g.ist, 1);
+        const sollStr = g.unit === 'eur' ? fmtEUR(g.soll) : fmtNum(g.soll, 1);
+
+        return `
+            <div class="gap-item">
+                <div class="gap-name">
+                    ${g.name}
+                    <small>${g.sub}</small>
+                </div>
+                <div class="gap-numbers">
+                    ${istStr}
+                    <small>Ziel: ${sollStr}</small>
+                </div>
+                <div class="gap-bar">
+                    <div class="gap-bar-fg ${cls}" style="width: ${pctFill}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/* ============================================================
+   HEBEL
+   ============================================================ */
+function bindLever(sliderId, valueId, displayFn, stateKey) {
+    const slider = $('#' + sliderId);
+    const valEl  = $('#' + valueId);
+    slider.addEventListener('input', () => {
+        const v = Number(slider.value);
+        state.levers[stateKey] = v;
+        valEl.textContent = displayFn(v);
+        renderLevers();
+    });
+}
+
+function renderLevers() {
+    const i = getInputs();
+    // Monatliche Provision pro Close (das, was diesen Monat aus jedem Close reinkommt)
+    const provPerCloseMonthly = computeProvPerCloseMonthly(i);
+    const monthlyCloses = computeMonthlyCloses(i);
+    const baselineMonthly = monthlyCloses * provPerCloseMonthly;
+
+    // Hebel 1: Mehr Closes - zusätzliche Closes/Woche → /Monat
+    const extraClosesPerMonth = state.levers.moreClosings * WEEKS_PER_MONTH;
+    const impactMore = extraClosesPerMonth * provPerCloseMonthly;
+
+    // Hebel 2: Höherer Cashflow / Close - % auf cashflowPerClose ⇒ proportional auf Provision
+    const impactDealSize = baselineMonthly * (state.levers.dealSize / 100);
+
+    // Hebel 3: No-Closes reaktivieren
+    const monthlyShowedUp = i.monthlyClosingAppts * i.closingShowupRate;
+    const noClosesPerMonth = Math.max(0, monthlyShowedUp - monthlyCloses);
+    const reactivatedPerMonth = noClosesPerMonth * (state.levers.reactivation / 100);
+    const impactReactivation = reactivatedPerMonth * provPerCloseMonthly;
+
+    // Hebel 4: Upsells - Upsells geben pro Monat: Upsell-Cashflow × Upsell-Provision
+    const upsellProvPerCloseMonthly = i.upsellCashflow * i.upsellRate;
+    const impactUpsell = monthlyCloses * (state.levers.upsell / 100) * upsellProvPerCloseMonthly;
+
+    // Hebel 5: Mehr Zeit in Cold Calls
+    const BASELINE_COLD_CALL_HOURS = 6;
+    const extraHoursPerDay = state.levers.coldCallTime;
+    const callMultiplier = extraHoursPerDay > 0
+        ? (BASELINE_COLD_CALL_HOURS + extraHoursPerDay) / BASELINE_COLD_CALL_HOURS
+        : 1;
+    const additionalClosesFromTime = monthlyCloses * (callMultiplier - 1);
+    const impactColdCallTime = additionalClosesFromTime * provPerCloseMonthly;
+
+    // Hebel 6: Call-Analyse am Abend - bessere Closing-Rate UND höherer Cashflow
+    const analysisGain = state.levers.callAnalysis / 100;
+    const newCloseRate = Math.min(1, i.closeRate * (1 + analysisGain));
+    const newClosesPerMonth = monthlyShowedUp * newCloseRate;
+    const newCashflowPerClose = i.cashflowPerClose * (1 + analysisGain);
+    const newProvPerCloseMonthly = newCashflowPerClose * i.provisionRate;
+    const newBaselineFromAnalysis = newClosesPerMonth * newProvPerCloseMonthly;
+    const impactCallAnalysis = Math.max(0, newBaselineFromAnalysis - baselineMonthly);
+
+    // Render
+    $('#impactMoreClosings').textContent = '+ ' + fmtEUR(impactMore);
+    $('#impactMoreClosingsSub').textContent = state.levers.moreClosings > 0
+        ? `+ ${fmtNum(extraClosesPerMonth, 1)} Closes/Monat`
+        : 'Slider bewegen für Vorschau';
+
+    $('#impactDealSize').textContent = '+ ' + fmtEUR(impactDealSize);
+    $('#impactDealSizeSub').textContent = state.levers.dealSize > 0
+        ? `Neuer Cashflow/Close: ${fmtEUR(i.cashflowPerClose * (1 + state.levers.dealSize/100))}`
+        : 'Slider bewegen für Vorschau';
+
+    $('#impactReactivation').textContent = '+ ' + fmtEUR(impactReactivation);
+    $('#impactReactivationSub').textContent = state.levers.reactivation > 0
+        ? `${fmtNum(reactivatedPerMonth, 1)} No-Closes zurück → Closes`
+        : `${fmtNum(noClosesPerMonth, 1)} No-Closes/Monat im Pool`;
+
+    $('#impactUpsell').textContent = '+ ' + fmtEUR(impactUpsell);
+    $('#impactUpsellSub').textContent = state.levers.upsell > 0
+        ? `${fmtNum(monthlyCloses * (state.levers.upsell/100), 1)} Upsells × ${fmtEUR(i.upsellCashflow)} × ${fmtPct(i.upsellRate * 100)}/Monat`
+        : `Cashflow: ${fmtEUR(i.upsellCashflow)} × ${fmtPct(i.upsellRate * 100)} pro Monat`;
+
+    $('#impactColdCallTime').textContent = '+ ' + fmtEUR(impactColdCallTime);
+    $('#impactColdCallTimeSub').textContent = extraHoursPerDay > 0
+        ? `+${fmtNum(additionalClosesFromTime, 1)} Closes/Monat (${fmtPct((callMultiplier - 1) * 100)} mehr Anwahlen)`
+        : 'Wochenend-Calls sind Standard im Top-Vertrieb';
+
+    $('#impactCallAnalysis').textContent = '+ ' + fmtEUR(impactCallAnalysis);
+    $('#impactCallAnalysisSub').textContent = analysisGain > 0
+        ? `Closing-Rate: ${fmtPct(newCloseRate * 100)} · Cashflow: ${fmtEUR(newCashflowPerClose)}`
+        : 'Aufzeichnungen sezieren · Einwände trainieren';
+
+    // Combined
+    const totalImpact = impactMore + impactDealSize + impactReactivation + impactUpsell
+                      + impactColdCallTime + impactCallAnalysis;
+    const newTotal = baselineMonthly + totalImpact;
+    $('#combinedTotal').textContent = fmtEUR(newTotal);
+    $('#combinedDelta').textContent = '+ ' + fmtEUR(totalImpact);
+    const pct = baselineMonthly > 0 ? (totalImpact / baselineMonthly) * 100 : 0;
+    $('#combinedDeltaSub').textContent = baselineMonthly > 0
+        ? `+${fmtNum(pct, 0)} % vs. IST-Niveau`
+        : 'IST-Niveau ist 0 € — erst Daten eintragen';
+}
+
+bindLever('leverMoreClosings', 'leverMoreClosingsVal', v => '+' + v, 'moreClosings');
+bindLever('leverDealSize', 'leverDealSizeVal', v => '+' + v + ' %', 'dealSize');
+bindLever('leverReactivation', 'leverReactivationVal', v => v + ' %', 'reactivation');
+bindLever('leverUpsell', 'leverUpsellVal', v => v + ' %', 'upsell');
+bindLever('leverColdCallTime', 'leverColdCallTimeVal', v => '+' + Number(v).toLocaleString('de-DE', {minimumFractionDigits: v % 1 === 0 ? 0 : 1}) + ' h', 'coldCallTime');
+bindLever('leverCallAnalysis', 'leverCallAnalysisVal', v => '+' + v + ' %', 'callAnalysis');
+
+/* ============================================================
+   AKTIVE CLOSINGS
+   ============================================================ */
+function renderClosings() {
+    const list = $('#closingsList');
+    list.innerHTML = '';
+    state.closings.forEach((c, idx) => {
+        const row = document.createElement('div');
+        row.className = 'closing-row';
+        row.dataset.id = c.id;
+        row.innerHTML = `
+            <div class="row-num">${idx + 1}</div>
+            <div>
+                <label class="input-label">Bezeichnung</label>
+                <input type="text" class="calc-input" data-field="name" value="${c.name.replace(/"/g, '&quot;')}" placeholder="z.B. Kunde XY">
+            </div>
+            <div>
+                <label class="input-label">Vertragswert (€)</label>
+                <input type="number" class="calc-input" data-field="amount" value="${c.amount}" min="0" step="500">
+            </div>
+            <div>
+                <label class="input-label">Anzahl Raten</label>
+                <input type="number" class="calc-input" data-field="rates" value="${c.rates}" min="1" max="60" step="1">
+            </div>
+            <div>
+                <label class="input-label">Provision / Rate</label>
+                <input type="text" class="calc-input calc-readonly" data-field="perRate" value="${fmtEURfine(perRateValue(c))}" readonly>
+            </div>
+            <button class="row-delete" data-action="delete" title="Löschen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+        `;
+        list.appendChild(row);
+    });
+    list.querySelectorAll('input[data-field]').forEach(inp => {
+        inp.addEventListener('input', e => {
+            const row = e.target.closest('.closing-row');
+            const id = Number(row.dataset.id);
+            const field = e.target.dataset.field;
+            const c = state.closings.find(x => x.id === id);
+            if (!c) return;
+            if (field === 'name') c.name = e.target.value;
+            else c[field] = Number(e.target.value) || 0;
+            const perRateInput = row.querySelector('input[data-field="perRate"]');
+            if (perRateInput) perRateInput.value = fmtEURfine(perRateValue(c));
+            renderClosingsSummary();
+        });
+    });
+    list.querySelectorAll('[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const id = Number(e.target.closest('.closing-row').dataset.id);
+            state.closings = state.closings.filter(c => c.id !== id);
+            renderClosings();
+            renderClosingsSummary();
+        });
+    });
+}
+
+function perRateValue(c) {
+    const rate = (Number($('#provisionRate').value) || 0) / 100;
+    if (!c.rates || c.rates < 1) return 0;
+    return ((Number(c.amount) || 0) / c.rates) * rate;
+}
+
+function renderClosingsSummary() {
+    const rate = (Number($('#provisionRate').value) || 0) / 100;
+    const closings = state.closings.filter(c => c.amount > 0 && c.rates > 0);
+    const count = closings.length;
+    const totalAmount = closings.reduce((s, c) => s + c.amount, 0);
+    const totalProvision = totalAmount * rate;
+    const maxRates = closings.reduce((m, c) => Math.max(m, c.rates), 0);
+
+    const months = [];
+    let cumulative = 0;
+    for (let m = 1; m <= maxRates; m++) {
+        let activeRates = 0;
+        let cashflow = 0;
+        closings.forEach(c => {
+            if (m <= c.rates) {
+                activeRates += 1;
+                cashflow += c.amount / c.rates;
+            }
+        });
+        const provision = cashflow * rate;
+        cumulative += provision;
+        months.push({ month: m, activeRates, cashflow, provision, cumulative });
+    }
+    const nextMonth = months.length > 0 ? months[0].provision : 0;
+
+    $('#kpiCount').textContent = count;
+    $('#kpiCountSub').textContent = count === 1 ? 'Vertrag erfasst' : 'Verträge erfasst';
+    $('#kpiTotal').textContent = fmtEUR(totalAmount);
+    $('#kpiNextMonth').textContent = fmtEUR(nextMonth);
+    $('#kpiTotalProvision').textContent = fmtEUR(totalProvision);
+    $('#kpiTotalProvisionSub').textContent = `${(rate * 100).toLocaleString('de-DE', {maximumFractionDigits: 1})} % auf ${fmtEUR(totalAmount)}`;
+
+    const tbody = $('#monthsBody');
+    const tfoot = $('#monthsFoot');
+    tbody.innerHTML = '';
+    tfoot.innerHTML = '';
+
+    if (months.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-dim); padding: 2rem;">Noch keine Closings erfasst.</td></tr>`;
+        return;
+    }
+    months.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>Monat ${m.month}</td>
+            <td>${m.activeRates}</td>
+            <td>${fmtEUR(m.cashflow)}</td>
+            <td class="td-accent">${fmtEUR(m.provision)}</td>
+            <td>${fmtEUR(m.cumulative)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    const totalActive = months.reduce((s, m) => s + m.activeRates, 0);
+    const totalCashflow = months.reduce((s, m) => s + m.cashflow, 0);
+    const totalProv = months.reduce((s, m) => s + m.provision, 0);
+    tfoot.innerHTML = `
+        <tr>
+            <td>Summe (${months.length} Monate)</td>
+            <td>${totalActive}</td>
+            <td>${fmtEUR(totalCashflow)}</td>
+            <td>${fmtEUR(totalProv)}</td>
+            <td>${fmtEUR(totalProv)}</td>
+        </tr>
+    `;
+}
+
+$('#addClosingBtn').addEventListener('click', () => {
+    state.closings.push({
+        id: state.nextClosingId++,
+        name: `Closing ${String.fromCharCode(64 + state.closings.length + 1)}`,
+        amount: 24000,
+        rates: 12
+    });
+    renderClosings();
+    renderClosingsSummary();
+});
+
+/* ============================================================
+   GLOBAL INPUTS LISTENER
+   ============================================================ */
+const globalInputs = ['lastMonthProvision',
+                      'monthlyCalls','monthlyReached','monthlySettings',
+                      'monthlyClosingAppts','closingShowupRate','closeRate',
+                      'cashflowPerClose','avgDealRates','provisionRate','upsellCashflow','upsellRate',
+                      'oneTimeShare','oneTimeAmount',
+                      'fixedSalary','workDaysPerMonth','overtimeHours','overtimeRate',
+                      'targetMonthlyAmount','targetStartDate','targetEndDate'];
+globalInputs.forEach(id => {
+    $('#' + id).addEventListener('input', renderAll);
+    $('#' + id).addEventListener('change', renderAll);
+});
+
+function renderAll() {
+    renderLastMonth();
+    renderFunnel();
+    renderTarget();
+    renderScore();
+    renderLevers();
+    renderClosingsSummary(); // weil provisionRate eintaucht
+    // Auch die Provision/Rate in den Closing-Rows aktualisieren (ohne Re-Render)
+    state.closings.forEach(c => {
+        const row = document.querySelector(`#closingsList .closing-row[data-id="${c.id}"]`);
+        if (!row) return;
+        const inp = row.querySelector('input[data-field="perRate"]');
+        if (inp) inp.value = fmtEURfine(perRateValue(c));
+    });
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+$('#resetBtn').addEventListener('click', () => {
+    state.closings = [
+        { id: 1, name: 'Closing A', amount: 36000, rates: 12 },
+        { id: 2, name: 'Closing B', amount: 24000, rates: 6 }
+    ];
+    state.nextClosingId = 3;
+    state.levers = {
+        moreClosings: 0, dealSize: 0, reactivation: 0, upsell: 0,
+        coldCallTime: 0, callAnalysis: 0
+    };
+
+    // Vormonats-Provision
+    $('#lastMonthProvision').value = 4800;
+
+    // Opening (vergangener Monat)
+    $('#monthlyCalls').value = 867;
+    $('#monthlyReached').value = 260;
+    $('#monthlySettings').value = 65;
+
+    // Closing (vergangener Monat)
+    $('#monthlyClosingAppts').value = 43;
+    $('#closingShowupRate').value = 70;
+    $('#closeRate').value = 30;
+
+    // Vertrag & Cashflow
+    $('#cashflowPerClose').value = 3000;
+    $('#avgDealRates').value = 12;
+    $('#provisionRate').value = 10;
+    $('#upsellCashflow').value = 900;
+    $('#upsellRate').value = 5;
+    $('#oneTimeShare').value = 0;
+    $('#oneTimeAmount').value = 15000;
+
+    // Arbeitszeit & Überstunden
+    $('#fixedSalary').value = 2500;
+    $('#workDaysPerMonth').value = 22;
+    $('#overtimeHours').value = 20;
+    $('#overtimeRate').value = 25;
+
+    // Ziel
+    $('#targetMonthlyAmount').value = 8000;
+    $('#targetStartDate').value = '2026-04-01';
+    $('#targetEndDate').value = '2026-12-31';
+
+    // Hebel
+    $('#leverMoreClosings').value = 0;
+    $('#leverDealSize').value = 0;
+    $('#leverReactivation').value = 0;
+    $('#leverUpsell').value = 0;
+    $('#leverColdCallTime').value = 0;
+    $('#leverCallAnalysis').value = 0;
+    $('#leverMoreClosingsVal').textContent = '+0';
+    $('#leverDealSizeVal').textContent = '+0 %';
+    $('#leverReactivationVal').textContent = '0 %';
+    $('#leverUpsellVal').textContent = '0 %';
+    $('#leverColdCallTimeVal').textContent = '+0 h';
+    $('#leverCallAnalysisVal').textContent = '+0 %';
+
+    renderClosings();
+    renderAll();
+});
+
+/* ============================================================
+   PDF EXPORT
+   ============================================================ */
+$('#exportPdfBtn').addEventListener('click', () => {
+    const originalTitle = document.title;
+    const today = new Date().toLocaleDateString('de-DE', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+    document.title = `Closer-Provisionsrechner · Lang Consulting · ${today}`;
+    window.print();
+    document.title = originalTitle;
+});
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+    $('#progressBar').style.width = Math.max(0, Math.min(100, scrolled)) + '%';
+}, { passive: true });
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderClosings();
+renderAll();
+</script>
+</body>
+</html>
