@@ -2823,6 +2823,39 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ============================================================
+   IFRAME HEIGHT REPORTER
+   Meldet die Höhe an Parent-Seite (z.B. Webflow), damit der
+   iFrame ohne interne Scrollbar dargestellt werden kann.
+   ============================================================ */
+(function() {
+    if (window.parent === window) return; // kein iFrame, nichts zu tun
+
+    let lastHeight = 0;
+    function reportHeight() {
+        const h = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight
+        );
+        if (Math.abs(h - lastHeight) > 2) {
+            lastHeight = h;
+            try {
+                window.parent.postMessage({ type: 'closer-calc-height', height: h }, '*');
+            } catch (e) { /* ignore */ }
+        }
+    }
+
+    // Beim Laden + bei Resize + bei DOM-Mutationen + periodisch (Fallback)
+    window.addEventListener('load', reportHeight);
+    window.addEventListener('resize', reportHeight);
+    new MutationObserver(reportHeight).observe(document.body, {
+        childList: true, subtree: true, attributes: true, characterData: true
+    });
+    setInterval(reportHeight, 500);
+})();
+
+/* ============================================================
    INIT
    ============================================================ */
 renderClosings();
